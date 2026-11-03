@@ -46,27 +46,27 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-[#F7F7F4] flex flex-col justify-center items-center px-4 py-8 select-none">
+    <div className="min-h-screen w-screen bg-[#F7F7F4] dark:bg-[#121212] flex flex-col justify-center items-center px-4 py-8 select-none transition-colors duration-200">
       
       {/* Centered Neumorphic Card */}
-      <div className="w-full max-w-md bg-[#FFFFFF] border border-[#E5E5E5] rounded-3xl neu-raised p-6 sm:p-8 md:p-10 transition-all">
+      <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-3xl neu-raised p-6 sm:p-8 md:p-10 transition-all">
         
         {/* Brand Icon & Heading */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-[#047857] text-white flex items-center justify-center shadow-xs mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#047857] dark:bg-[#059669] text-white flex items-center justify-center shadow-xs mb-4">
             <FileText className="w-7 h-7 stroke-[2.2]" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717] mb-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-1.5">
             Reset your password
           </h1>
-          <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#737373] dark:text-[#A3A3A3] leading-relaxed">
             Enter your registered email address and we'll send you a link to reset your password.
           </p>
         </div>
 
         {/* Success Alert */}
         {success && (
-          <div className="mb-6 p-4 rounded-2xl bg-[#047857]/8 border border-[#047857]/20 flex items-start gap-2.5 text-xs text-[#047857]">
+          <div className="mb-6 p-4 rounded-2xl bg-[#047857]/8 dark:bg-[#10B981]/15 border border-[#047857]/20 dark:border-[#10B981]/30 flex items-start gap-2.5 text-xs text-[#047857] dark:text-[#10B981]">
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
             <span className="leading-relaxed">
               Password reset link sent! Check your inbox for instructions to reset your password.
@@ -87,7 +87,7 @@ export function ForgotPasswordPage() {
           
           {/* Email field */}
           <div>
-            <label className="block text-xs font-semibold text-[#171717] mb-1.5">
+            <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED] mb-1.5">
               Email address
             </label>
             <input
@@ -97,7 +97,7 @@ export function ForgotPasswordPage() {
               placeholder="nishu@example.com"
               disabled={loading || success}
               autoComplete="email"
-              className="w-full bg-[#FFFFFF] border border-[#E5E5E5] neu-inset-sm rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[#171717] placeholder-[#737373] focus:outline-hidden focus:border-[#047857]/50 transition-colors"
+              className="w-full bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-inset-sm rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[#171717] dark:text-[#EDEDED] placeholder-[#737373] dark:placeholder-[#6B7280] focus:outline-hidden focus:border-[#047857]/50 dark:focus:border-[#10B981]/50 transition-colors"
             />
           </div>
 
@@ -120,10 +120,10 @@ export function ForgotPasswordPage() {
         </form>
 
         {/* Back to Login Link */}
-        <div className="mt-8 pt-5 border-t border-[#E5E5E5] text-center">
+        <div className="mt-8 pt-5 border-t border-[#E5E5E5] dark:border-[#2E2E2E] text-center">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#737373] hover:text-[#047857] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#737373] dark:text-[#A3A3A3] hover:text-[#047857] dark:hover:text-[#10B981] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to sign in</span>
@@ -132,7 +132,7 @@ export function ForgotPasswordPage() {
 
       </div>
 
-      <div className="mt-6 text-[11px] text-[#737373] text-center">
+      <div className="mt-6 text-[11px] text-[#737373] dark:text-[#A3A3A3] text-center">
         ResumeAI · Password recovery
       </div>
     </div>

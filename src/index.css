@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   html, body {
     overflow-x: hidden;
@@ -7,9 +9,14 @@
     background-color: #F7F7F4;
     color: #171717;
   }
+
+  html.dark, html.dark body {
+    background-color: #121212;
+    color: #EDEDED;
+  }
 }
 
-/* Neumorphic Soft UI Utilities */
+/* Neumorphic Soft UI Utilities - Light Mode */
 .neu-raised {
   box-shadow: 6px 6px 14px rgba(0, 0, 0, 0.06), -6px -6px 14px rgba(255, 255, 255, 0.95);
 }
@@ -67,6 +74,61 @@
   transform: translateY(0);
 }
 
+/* Neumorphic Soft UI Utilities - Dark Mode */
+.dark .neu-raised {
+  box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.5), -3px -3px 10px rgba(255, 255, 255, 0.025);
+}
+
+.dark .neu-raised-sm {
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.45), -2px -2px 6px rgba(255, 255, 255, 0.025);
+}
+
+.dark .neu-raised-card {
+  background-color: #1E1E1E;
+  border-color: #2E2E2E;
+  box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.45), -2px -2px 8px rgba(255, 255, 255, 0.025);
+}
+
+.dark .neu-inset {
+  box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.5), inset -2px -2px 6px rgba(255, 255, 255, 0.02);
+}
+
+.dark .neu-inset-sm {
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.45), inset -1px -1px 4px rgba(255, 255, 255, 0.02);
+}
+
+.dark .neu-button {
+  background-color: #1E1E1E;
+  border: 1px solid #2E2E2E;
+  color: #EDEDED;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.45), -2px -2px 6px rgba(255, 255, 255, 0.025);
+}
+
+.dark .neu-button:hover {
+  background-color: #262626;
+  border-color: #383838;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.55), -2px -2px 8px rgba(255, 255, 255, 0.04);
+}
+
+.dark .neu-button:active {
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -1px -1px 4px rgba(255, 255, 255, 0.02);
+}
+
+.dark .neu-button-emerald {
+  background-color: #059669;
+  color: #FFFFFF;
+  box-shadow: 3px 3px 12px rgba(5, 150, 105, 0.35), -1px -1px 6px rgba(255, 255, 255, 0.03);
+}
+
+.dark .neu-button-emerald:hover {
+  background-color: #10B981;
+  box-shadow: 4px 4px 16px rgba(16, 185, 129, 0.45), -1px -1px 6px rgba(255, 255, 255, 0.04);
+}
+
+.dark .neu-button-emerald:active {
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -84,6 +146,14 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #D4D4D4;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3E3E3E;
 }
 
 /* Markdown chat styling */
@@ -176,4 +246,39 @@
 .prose-chat hr {
   border-color: #E5E5E5;
   margin: 1.25em 0;
+}
+
+/* Dark mode prose styles */
+.dark .prose-chat {
+  color: #EDEDED;
+}
+
+.dark .prose-chat h1, .dark .prose-chat h2, .dark .prose-chat h3, .dark .prose-chat h4 {
+  color: #FFFFFF;
+}
+
+.dark .prose-chat strong {
+  color: #FFFFFF;
+}
+
+.dark .prose-chat blockquote {
+  border-left-color: #10B981;
+  background-color: rgba(16, 185, 129, 0.08);
+  color: #EDEDED;
+}
+
+.dark .prose-chat code {
+  background-color: #171717;
+  border-color: #2E2E2E;
+  color: #34D399;
+}
+
+.dark .prose-chat pre {
+  background-color: #121212;
+  border: 1px solid #2E2E2E;
+  color: #EDEDED;
+}
+
+.dark .prose-chat hr {
+  border-color: #2E2E2E;
 }

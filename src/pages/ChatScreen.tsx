@@ -42,7 +42,30 @@ export function ChatScreen() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [settings, setSettings] = useState<ChatSettings>(getStoredSettings());
   
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    const stored = localStorage.getItem('resumeai_sidebar_open');
+    if (stored !== null) return stored === 'true';
+    return window.innerWidth >= 1024;
+  });
+
+  const handleToggleSidebar = useCallback(() => {
+    setIsSidebarOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('resumeai_sidebar_open', String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const handleCloseSidebar = useCallback(() => {
+    setIsSidebarOpen(false);
+    try {
+      localStorage.setItem('resumeai_sidebar_open', 'false');
+    } catch {}
+  }, []);
+
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   
@@ -180,15 +203,27 @@ export function ChatScreen() {
 
   // Auto-generate title if this is the first user message
   const maybeGenerateTitle = async (convId: string, firstMsg: string) => {
+    // Generate deterministic local fallback title immediately
+    const cleanWords = firstMsg
+      .trim()
+      .replace(/[^\w\s]/g, '')
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ');
+    const fallbackTitle = cleanWords.length > 2
+      ? cleanWords.charAt(0).toUpperCase() + cleanWords.slice(1) + ' Resume'
+      : 'Resume Discussion';
+
     try {
       const res = await fetch('/api/chat/title', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstMessage: firstMsg }),
       });
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
         const data = await res.json();
-        if (data.title) {
+        if (data?.title) {
           setConversations((prev) => {
             const next = prev.map((c) =>
               c.id === convId ? { ...c, title: data.title } : c
@@ -196,10 +231,30 @@ export function ChatScreen() {
             saveConversations(next);
             return next;
           });
+          return;
         }
       }
-    } catch (err) {
-      console.error('Error auto-generating conversation title:', err);
+      // If not JSON or title missing, apply fallback title
+      setConversations((prev) => {
+        const next = prev.map((c) =>
+          c.id === convId && (!c.title || c.title === 'Software Developer Resume' || c.title === 'New Chat')
+            ? { ...c, title: fallbackTitle }
+            : c
+        );
+        saveConversations(next);
+        return next;
+      });
+    } catch {
+      // Graceful local title fallback without console error
+      setConversations((prev) => {
+        const next = prev.map((c) =>
+          c.id === convId && (!c.title || c.title === 'Software Developer Resume' || c.title === 'New Chat')
+            ? { ...c, title: fallbackTitle }
+            : c
+        );
+        saveConversations(next);
+        return next;
+      });
     }
   };
 
@@ -248,6 +303,7 @@ export function ChatScreen() {
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    let accumulatedContent = '';
 
     try {
       const payloadMessages = [...targetConv.messages, userMessage].map((m) => ({
@@ -276,50 +332,69 @@ export function ChatScreen() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
-      let accumulatedContent = '';
       let done = false;
       let buffer = '';
+      let serverError: string | null = null;
+
+      const processLine = (rawLine: string) => {
+        const trimmed = rawLine.trim();
+        if (!trimmed || !trimmed.startsWith('data: ')) return;
+        const dataStr = trimmed.slice(6).trim();
+        if (dataStr === '[DONE]') {
+          done = true;
+          return;
+        }
+        try {
+          const parsed = JSON.parse(dataStr);
+          if (parsed.error) {
+            serverError = parsed.error;
+          } else if (typeof parsed.text === 'string') {
+            accumulatedContent += parsed.text;
+            setConversations((prev) =>
+              prev.map((c) => {
+                if (c.id !== targetConvId) return c;
+                const nextMsgs = c.messages.map((m) =>
+                  m.id === assistantPlaceholderId
+                    ? { ...m, content: accumulatedContent, isStreaming: true }
+                    : m
+                );
+                return { ...c, messages: nextMsgs };
+              })
+            );
+          }
+        } catch {
+          // Ignore partial or non-JSON SSE data
+        }
+      };
 
       while (!done) {
         const { value, done: streamDone } = await reader.read();
-        done = streamDone;
+        if (streamDone) {
+          done = true;
+        }
         if (value) {
           buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('data: ')) {
-              const dataStr = trimmedLine.replace('data: ', '').trim();
-              if (dataStr === '[DONE]') {
-                done = true;
-                break;
-              }
-              try {
-                const parsed = JSON.parse(dataStr);
-                if (parsed.text) {
-                  accumulatedContent += parsed.text;
-                  setConversations((prev) =>
-                    prev.map((c) => {
-                      if (c.id !== targetConvId) return c;
-                      const nextMsgs = c.messages.map((m) =>
-                        m.id === assistantPlaceholderId
-                          ? { ...m, content: accumulatedContent, isStreaming: true }
-                          : m
-                      );
-                      return { ...c, messages: nextMsgs };
-                    })
-                  );
-                } else if (parsed.error) {
-                  throw new Error(parsed.error);
-                }
-              } catch {
-                // Ignore raw token parse variations
-              }
+          const parts = buffer.split('\n\n');
+          buffer = parts.pop() || '';
+          for (const part of parts) {
+            const sublines = part.split('\n');
+            for (const sub of sublines) {
+              processLine(sub);
             }
           }
         }
+      }
+
+      // Flush any remaining data left in buffer
+      if (buffer.trim()) {
+        const remaining = buffer.split('\n');
+        for (const sub of remaining) {
+          processLine(sub);
+        }
+      }
+
+      if (serverError && !accumulatedContent) {
+        throw new Error(serverError);
       }
 
       setConversations((prev) => {
@@ -327,7 +402,12 @@ export function ChatScreen() {
           if (c.id !== targetConvId) return c;
           const nextMsgs = c.messages.map((m) =>
             m.id === assistantPlaceholderId
-              ? { ...m, content: accumulatedContent || 'No response content generated.', isStreaming: false }
+              ? {
+                  ...m,
+                  content: accumulatedContent || (serverError ? `Error: ${serverError}` : 'Unable to generate response. Please try again.'),
+                  isStreaming: false,
+                  error: serverError || undefined,
+                }
               : m
           );
           return { ...c, messages: nextMsgs, updatedAt: Date.now() };
@@ -360,9 +440,9 @@ export function ChatScreen() {
               m.id === assistantPlaceholderId
                 ? {
                     ...m,
-                    content: m.content || 'Failed to complete response. Please check your network or try again.',
+                    content: accumulatedContent || 'An error occurred while generating response. Please try again.',
                     isStreaming: false,
-                    error: err.message || 'Error occurred while contacting AI service.',
+                    error: err?.message || 'Error occurred while contacting AI service.',
                   }
                 : m
             );
@@ -451,6 +531,7 @@ export function ChatScreen() {
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    let accumulatedContent = '';
 
     try {
       const payloadMessages = trimmedMsgs.map((m) => ({
@@ -474,46 +555,66 @@ export function ChatScreen() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
-      let accumulatedContent = '';
       let done = false;
       let buffer = '';
+      let serverError: string | null = null;
+
+      const processLine = (rawLine: string) => {
+        const trimmed = rawLine.trim();
+        if (!trimmed || !trimmed.startsWith('data: ')) return;
+        const dataStr = trimmed.slice(6).trim();
+        if (dataStr === '[DONE]') {
+          done = true;
+          return;
+        }
+        try {
+          const parsed = JSON.parse(dataStr);
+          if (parsed.error) {
+            serverError = parsed.error;
+          } else if (typeof parsed.text === 'string') {
+            accumulatedContent += parsed.text;
+            setConversations((prev) =>
+              prev.map((c) => {
+                if (c.id !== activeId) return c;
+                const nextMsgs = c.messages.map((m) =>
+                  m.id === assistantPlaceholderId
+                    ? { ...m, content: accumulatedContent, isStreaming: true }
+                    : m
+                );
+                return { ...c, messages: nextMsgs };
+              })
+            );
+          }
+        } catch {}
+      };
 
       while (!done) {
         const { value, done: streamDone } = await reader.read();
-        done = streamDone;
+        if (streamDone) {
+          done = true;
+        }
         if (value) {
           buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('data: ')) {
-              const dataStr = trimmedLine.replace('data: ', '').trim();
-              if (dataStr === '[DONE]') {
-                done = true;
-                break;
-              }
-              try {
-                const parsed = JSON.parse(dataStr);
-                if (parsed.text) {
-                  accumulatedContent += parsed.text;
-                  setConversations((prev) =>
-                    prev.map((c) => {
-                      if (c.id !== activeId) return c;
-                      const nextMsgs = c.messages.map((m) =>
-                        m.id === assistantPlaceholderId
-                          ? { ...m, content: accumulatedContent, isStreaming: true }
-                          : m
-                      );
-                      return { ...c, messages: nextMsgs };
-                    })
-                  );
-                }
-              } catch {}
+          const parts = buffer.split('\n\n');
+          buffer = parts.pop() || '';
+          for (const part of parts) {
+            const sublines = part.split('\n');
+            for (const sub of sublines) {
+              processLine(sub);
             }
           }
         }
+      }
+
+      if (buffer.trim()) {
+        const remaining = buffer.split('\n');
+        for (const sub of remaining) {
+          processLine(sub);
+        }
+      }
+
+      if (serverError && !accumulatedContent) {
+        throw new Error(serverError);
       }
 
       setConversations((prev) => {
@@ -521,7 +622,12 @@ export function ChatScreen() {
           if (c.id !== activeId) return c;
           const nextMsgs = c.messages.map((m) =>
             m.id === assistantPlaceholderId
-              ? { ...m, content: accumulatedContent, isStreaming: false }
+              ? {
+                  ...m,
+                  content: accumulatedContent || (serverError ? `Error: ${serverError}` : 'Unable to regenerate response. Please try again.'),
+                  isStreaming: false,
+                  error: serverError || undefined,
+                }
               : m
           );
           return { ...c, messages: nextMsgs, updatedAt: Date.now() };
@@ -533,6 +639,24 @@ export function ChatScreen() {
     } catch (err: any) {
       if (err.name !== 'AbortError') {
         console.error('Regenerate error:', err);
+        setConversations((prev) => {
+          const next = prev.map((c) => {
+            if (c.id !== activeId) return c;
+            const nextMsgs = c.messages.map((m) =>
+              m.id === assistantPlaceholderId
+                ? {
+                    ...m,
+                    content: m.content || 'An error occurred while regenerating response. Please try again.',
+                    isStreaming: false,
+                    error: err?.message || 'Error occurred while contacting AI service.',
+                  }
+                : m
+            );
+            return { ...c, messages: nextMsgs };
+          });
+          saveConversations(next);
+          return next;
+        });
       }
     } finally {
       setIsLoading(false);
@@ -566,9 +690,10 @@ export function ChatScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: activeConversation.messages }),
       });
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
         const data = await res.json();
-        if (data.markdown) {
+        if (data?.markdown) {
           const updated = conversations.map((c) =>
             c.id === activeId ? { ...c, extractedResume: data.markdown } : c
           );
@@ -578,7 +703,7 @@ export function ChatScreen() {
         }
       }
     } catch (err) {
-      console.error('Error extracting resume:', err);
+      console.warn('Could not extract resume via API:', err);
     } finally {
       setIsExtractingResume(false);
     }
@@ -656,7 +781,7 @@ export function ChatScreen() {
   const displayMessages = rawMessages.length > 0 ? rawMessages : [DEFAULT_INTRO_MESSAGE];
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F7F7F4] text-[#171717] font-sans">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F7F7F4] dark:bg-[#121212] text-[#171717] dark:text-[#EDEDED] font-sans transition-colors duration-200">
       
       {/* Floating Left Sidebar (Preserved exactly as approved) */}
       <Sidebar
@@ -666,7 +791,7 @@ export function ChatScreen() {
         onNewChat={handleNewChat}
         onDeleteConversation={handleDeleteConversation}
         isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
+        onClose={handleCloseSidebar}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         onOpenResumePreview={() => setIsResumeModalOpen(true)}
         onGoHome={() => setShowHomeScreen(true)}
@@ -674,7 +799,7 @@ export function ChatScreen() {
       />
 
       {/* Main Chat Workspace */}
-      <main className="flex-1 flex flex-col h-full min-w-0 relative overflow-hidden">
+      <main className="flex-1 flex flex-col h-full min-w-0 relative overflow-hidden transition-all duration-300">
         
         {showHomeScreen ? (
           <WelcomeScreen
@@ -683,7 +808,8 @@ export function ChatScreen() {
               handleSendMessage(msg);
             }}
             isLoading={isLoading}
-            onToggleSidebar={() => setIsSidebarOpen(true)}
+            onToggleSidebar={handleToggleSidebar}
+            isSidebarOpen={isSidebarOpen}
           />
         ) : (
           <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -695,7 +821,8 @@ export function ChatScreen() {
               onGoBack={() => setShowHomeScreen(true)}
               onNewChat={handleNewChat}
               onOpenResumePreview={() => setIsResumeModalOpen(true)}
-              onToggleSidebar={() => setIsSidebarOpen(true)}
+              onToggleSidebar={handleToggleSidebar}
+              isSidebarOpen={isSidebarOpen}
               onClearConversation={handleClearConversation}
               onExportConversation={handleExportConversation}
             />
@@ -721,7 +848,7 @@ export function ChatScreen() {
             </div>
 
             {/* Fixed Chat Input Area at the bottom */}
-            <div className="shrink-0 bg-[#F7F7F4]/95 backdrop-blur-xs">
+            <div className="shrink-0 bg-[#F7F7F4]/95 dark:bg-[#121212]/95 backdrop-blur-xs transition-colors duration-200">
               <ChatInput
                 onSendMessage={handleSendMessage}
                 isLoading={isLoading}
@@ -757,18 +884,18 @@ export function ChatScreen() {
       {/* Login Required Modal (Unauthenticated chat interception) */}
       {showAuthModal && (
         <div
-          className="fixed inset-0 z-50 bg-[#171717]/35 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-[#171717]/35 dark:bg-black/65 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setShowAuthModal(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#FFFFFF] border border-[#E5E5E5] rounded-3xl neu-raised p-6 sm:p-8 text-center relative transition-all"
+            className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-3xl neu-raised p-6 sm:p-8 text-center relative transition-all"
           >
             {/* Dismiss close button */}
             <button
               type="button"
               onClick={() => setShowAuthModal(false)}
-              className="absolute top-4 right-4 p-2 text-[#737373] hover:text-[#171717] hover:bg-[#F7F7F4] rounded-full transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-2 text-[#737373] dark:text-[#A3A3A3] hover:text-[#171717] dark:hover:text-[#FFFFFF] hover:bg-[#F7F7F4] dark:hover:bg-[#262626] rounded-full transition-colors cursor-pointer"
               title="Close"
               aria-label="Close"
             >
@@ -776,27 +903,27 @@ export function ChatScreen() {
             </button>
 
             {/* Document icon */}
-            <div className="w-14 h-14 rounded-2xl bg-[#047857]/10 text-[#047857] flex items-center justify-center mx-auto mb-4 neu-raised-sm">
+            <div className="w-14 h-14 rounded-2xl bg-[#047857]/10 dark:bg-[#10B981]/15 text-[#047857] dark:text-[#10B981] flex items-center justify-center mx-auto mb-4 neu-raised-sm">
               <FileText className="w-7 h-7 stroke-[2.2]" />
             </div>
 
             {/* Heading */}
-            <h3 className="text-xl sm:text-2xl font-bold text-[#171717] tracking-tight mb-2 leading-snug">
+            <h3 className="text-xl sm:text-2xl font-bold text-[#171717] dark:text-[#FFFFFF] tracking-tight mb-2 leading-snug">
               Sign in to start building your professional resume.
             </h3>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm text-[#737373] leading-relaxed mb-5">
+            <p className="text-xs sm:text-sm text-[#737373] dark:text-[#A3A3A3] leading-relaxed mb-5">
               Create an account or log in to continue your conversation with ResumeAI.
             </p>
 
             {/* Message preview snippet */}
             {pendingMessageText && (
-              <div className="mb-5 p-3 rounded-2xl bg-[#F7F7F4] border border-[#E5E5E5] neu-inset-sm text-left">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#737373] block mb-1">
+              <div className="mb-5 p-3 rounded-2xl bg-[#F7F7F4] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-inset-sm text-left">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#737373] dark:text-[#A3A3A3] block mb-1">
                   Draft message saved
                 </span>
-                <p className="text-xs text-[#171717] line-clamp-2 leading-relaxed">
+                <p className="text-xs text-[#171717] dark:text-[#EDEDED] line-clamp-2 leading-relaxed">
                   "{pendingMessageText}"
                 </p>
               </div>
@@ -814,7 +941,7 @@ export function ChatScreen() {
                   setShowAuthModal(false);
                   navigate('/login');
                 }}
-                className="w-full py-3 px-4 rounded-xl neu-button-emerald bg-[#047857] hover:bg-[#065F46] text-white text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm"
+                className="w-full py-3 px-4 rounded-xl neu-button-emerald bg-[#047857] hover:bg-[#065F46] dark:bg-[#059669] dark:hover:bg-[#10B981] text-white text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm"
               >
                 <span>Login to Continue</span>
                 <ArrowRight className="w-4 h-4" />
@@ -830,13 +957,13 @@ export function ChatScreen() {
                   setShowAuthModal(false);
                   navigate('/signup');
                 }}
-                className="w-full py-3 px-4 rounded-xl bg-[#FFFFFF] border border-[#E5E5E5] neu-raised-sm hover:bg-[#F7F7F4] text-[#171717] hover:text-[#047857] text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="w-full py-3 px-4 rounded-xl bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-raised-sm hover:bg-[#F7F7F4] dark:hover:bg-[#333333] text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
                 <span>Create an Account</span>
               </button>
             </div>
 
-            <div className="mt-4 text-[11px] text-[#737373]">
+            <div className="mt-4 text-[11px] text-[#737373] dark:text-[#A3A3A3]">
               Your input is preserved and will send automatically right after sign in.
             </div>
           </div>

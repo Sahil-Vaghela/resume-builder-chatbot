@@ -73,24 +73,24 @@ export function ResumePreviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-[#171717]/35 backdrop-blur-xs select-none">
-      <div className="relative w-full max-w-4xl max-h-[94vh] bg-[#FFFFFF] rounded-2xl neu-raised border border-[#E5E5E5] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-[#171717]/35 dark:bg-black/65 backdrop-blur-xs select-none">
+      <div className="relative w-full max-w-4xl max-h-[94vh] bg-[#FFFFFF] dark:bg-[#1E1E1E] rounded-2xl neu-raised border border-[#E5E5E5] dark:border-[#2E2E2E] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         
         {/* Modal Header */}
-        <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-[#E5E5E5] flex flex-wrap items-center justify-between gap-2.5 bg-[#F7F7F4]">
+        <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-[#E5E5E5] dark:border-[#2E2E2E] flex flex-wrap items-center justify-between gap-2.5 bg-[#F7F7F4] dark:bg-[#161616]">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
-            <h2 className="text-sm sm:text-base font-semibold text-[#171717] truncate">
+            <h2 className="text-sm sm:text-base font-semibold text-[#171717] dark:text-[#FFFFFF] truncate">
               Live Resume Document
             </h2>
 
             {/* Soft UI Segmented Control */}
-            <div className="flex items-center bg-[#FFFFFF] border border-[#E5E5E5] neu-inset-sm p-0.5 sm:p-1 rounded-xl text-xs font-medium text-[#737373]">
+            <div className="flex items-center bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-inset-sm p-0.5 sm:p-1 rounded-xl text-xs font-medium text-[#737373] dark:text-[#A3A3A3]">
               <button
                 onClick={() => setActiveTab('preview')}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-lg transition-all cursor-pointer text-[11px] sm:text-xs ${
                   activeTab === 'preview'
-                    ? 'bg-[#F7F7F4] text-[#047857] neu-raised-sm font-semibold'
-                    : 'hover:text-[#171717]'
+                    ? 'bg-[#F7F7F4] dark:bg-[#1E1E1E] text-[#047857] dark:text-[#10B981] neu-raised-sm font-semibold'
+                    : 'hover:text-[#171717] dark:hover:text-[#FFFFFF]'
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" />
@@ -100,8 +100,8 @@ export function ResumePreviewModal({
                 onClick={() => setActiveTab('editor')}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-lg transition-all cursor-pointer text-[11px] sm:text-xs ${
                   activeTab === 'editor'
-                    ? 'bg-[#F7F7F4] text-[#047857] neu-raised-sm font-semibold'
-                    : 'hover:text-[#171717]'
+                    ? 'bg-[#F7F7F4] dark:bg-[#1E1E1E] text-[#047857] dark:text-[#10B981] neu-raised-sm font-semibold'
+                    : 'hover:text-[#171717] dark:hover:text-[#FFFFFF]'
                 }`}
               >
                 <Edit3 className="w-3.5 h-3.5" />
@@ -136,17 +136,17 @@ export function ResumePreviewModal({
             {/* Copy button */}
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-[#171717] bg-[#FFFFFF] hover:bg-[#F7F7F4] border border-[#E5E5E5] rounded-xl neu-button transition-all cursor-pointer"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-[#171717] dark:text-[#EDEDED] bg-[#FFFFFF] dark:bg-[#262626] hover:bg-[#F7F7F4] dark:hover:bg-[#333333] border border-[#E5E5E5] dark:border-[#333333] rounded-xl neu-button transition-all cursor-pointer"
               title="Copy markdown text"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-[#047857]" />
-                  <span className="text-[#047857] font-semibold hidden xs:inline">Copied!</span>
+                  <Check className="w-3.5 h-3.5 text-[#047857] dark:text-[#10B981]" />
+                  <span className="text-[#047857] dark:text-[#10B981] font-semibold hidden xs:inline">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-[#737373]" />
+                  <Copy className="w-3.5 h-3.5 text-[#737373] dark:text-[#A3A3A3]" />
                   <span className="hidden xs:inline">Copy</span>
                 </>
               )}
@@ -155,17 +155,17 @@ export function ResumePreviewModal({
             {/* Export button */}
             <button
               onClick={() => handleDownload('md')}
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-[#171717] bg-[#FFFFFF] hover:bg-[#F7F7F4] border border-[#E5E5E5] rounded-xl neu-button transition-all cursor-pointer"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-[#171717] dark:text-[#EDEDED] bg-[#FFFFFF] dark:bg-[#262626] hover:bg-[#F7F7F4] dark:hover:bg-[#333333] border border-[#E5E5E5] dark:border-[#333333] rounded-xl neu-button transition-all cursor-pointer"
               title="Download as Markdown file"
             >
-              <Download className="w-3.5 h-3.5 text-[#737373]" />
+              <Download className="w-3.5 h-3.5 text-[#737373] dark:text-[#A3A3A3]" />
               <span className="hidden sm:inline">Export</span>
             </button>
 
             {/* Print button */}
             <button
               onClick={handlePrint}
-              className="p-1.5 sm:p-2 text-[#737373] hover:text-[#171717] bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl neu-button transition-all cursor-pointer"
+              className="p-1.5 sm:p-2 text-[#737373] dark:text-[#A3A3A3] hover:text-[#171717] dark:hover:text-[#FFFFFF] bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] rounded-xl neu-button transition-all cursor-pointer"
               title="Print or Save as PDF"
             >
               <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -174,7 +174,7 @@ export function ResumePreviewModal({
             {/* Close modal */}
             <button
               onClick={onClose}
-              className="p-1.5 sm:p-2 text-[#737373] hover:text-[#171717] rounded-xl transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 text-[#737373] dark:text-[#A3A3A3] hover:text-[#171717] dark:hover:text-[#FFFFFF] rounded-xl transition-colors cursor-pointer"
               title="Close modal"
             >
               <X className="w-4 h-4" />
@@ -183,9 +183,9 @@ export function ResumePreviewModal({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-8 bg-[#F7F7F4]">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-8 bg-[#F7F7F4] dark:bg-[#121212]">
           {activeTab === 'preview' ? (
-            <div className="max-w-2xl mx-auto bg-[#FFFFFF] p-5 sm:p-8 md:p-12 rounded-xl border border-[#E5E5E5] min-h-[400px] sm:min-h-[500px] shadow-sm select-text overflow-hidden">
+            <div className="max-w-2xl mx-auto bg-[#FFFFFF] dark:bg-[#1E1E1E] p-5 sm:p-8 md:p-12 rounded-xl border border-[#E5E5E5] dark:border-[#2E2E2E] min-h-[400px] sm:min-h-[500px] shadow-sm select-text overflow-hidden">
               <div
                 className="prose-chat break-words [overflow-wrap:anywhere]"
                 dangerouslySetInnerHTML={{ __html: renderedHtml }}
@@ -198,16 +198,16 @@ export function ResumePreviewModal({
                 onChange={(e) => onUpdateContent(e.target.value)}
                 placeholder="# Nishu Sharma&#10;**Software Engineer**&#10;nishu@example.com · linkedin.com/in/nishu..."
                 rows={16}
-                className="w-full bg-[#FFFFFF] border border-[#E5E5E5] neu-inset rounded-2xl p-4 sm:p-5 text-xs sm:text-sm font-mono text-[#171717] leading-relaxed focus:outline-hidden focus:border-[#047857]/50 resize-y"
+                className="w-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-inset rounded-2xl p-4 sm:p-5 text-xs sm:text-sm font-mono text-[#171717] dark:text-[#EDEDED] leading-relaxed focus:outline-hidden focus:border-[#047857]/50 dark:focus:border-[#10B981]/50 resize-y"
               />
             </div>
           )}
         </div>
 
         {/* Modal Footer */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-t border-[#E5E5E5] bg-[#FFFFFF] flex items-center justify-between text-[11px] sm:text-xs text-[#737373] gap-2">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-t border-[#E5E5E5] dark:border-[#2E2E2E] bg-[#FFFFFF] dark:bg-[#1A1A1A] flex items-center justify-between text-[11px] sm:text-xs text-[#737373] dark:text-[#A3A3A3] gap-2">
           <span className="truncate">ATS semantic hierarchy compliant</span>
-          <span className="font-mono text-[10px] sm:text-[11px] text-[#737373] shrink-0">
+          <span className="font-mono text-[10px] sm:text-[11px] text-[#737373] dark:text-[#A3A3A3] shrink-0">
             {markdownContent ? `${markdownContent.split(/\s+/).filter(Boolean).length} words` : '0 words'}
           </span>
         </div>

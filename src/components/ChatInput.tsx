@@ -74,10 +74,7 @@ export function ChatInput({
         
         {/* Large Rounded Neumorphic Capsule Input Bar */}
         <div
-          className="relative flex items-center bg-[#FFFFFF] border border-[#E5E5E5] rounded-full p-1.5 sm:p-2 pl-3.5 sm:pl-6 transition-all focus-within:border-[#047857]/50 focus-within:ring-2 focus-within:ring-[#047857]/5"
-          style={{
-            boxShadow: 'inset 3px 3px 7px rgba(0, 0, 0, 0.04), inset -3px -3px 7px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(0, 0, 0, 0.02)',
-          }}
+          className="relative flex items-center bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-full p-1.5 sm:p-2 pl-3.5 sm:pl-6 transition-all focus-within:border-[#047857]/50 dark:focus-within:border-[#10B981]/50 focus-within:ring-2 focus-within:ring-[#047857]/5 neu-inset"
         >
           {/* Hidden file input */}
           <input
@@ -98,7 +95,7 @@ export function ChatInput({
             placeholder="Tell me more or provide additional details..."
             rows={1}
             disabled={disabled}
-            className="flex-1 resize-none bg-transparent py-1.5 sm:py-2 text-xs sm:text-sm md:text-[15px] text-[#171717] placeholder:text-[#737373] focus:outline-hidden leading-relaxed max-h-[130px] font-normal min-w-0"
+            className="flex-1 resize-none bg-transparent py-1.5 sm:py-2 text-xs sm:text-sm md:text-[15px] text-[#171717] dark:text-[#EDEDED] placeholder:text-[#737373] dark:placeholder:text-[#6B7280] focus:outline-hidden leading-relaxed max-h-[130px] font-normal min-w-0"
           />
 
           {/* Right Action Icons: Attachment + Emerald Send Button */}
@@ -108,7 +105,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-1.5 sm:p-2 text-[#171717] hover:text-[#047857] transition-colors rounded-full cursor-pointer touch-manipulation"
+              className="p-1.5 sm:p-2 text-[#171717] dark:text-[#A3A3A3] hover:text-[#047857] dark:hover:text-[#10B981] transition-colors rounded-full cursor-pointer touch-manipulation"
               title="Attach document or notes"
               aria-label="Attach file"
             >
@@ -120,7 +117,7 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={onStopGeneration}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#171717] hover:bg-[#262626] text-[#FFFFFF] flex items-center justify-center transition-all cursor-pointer shadow-sm touch-manipulation shrink-0"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#171717] dark:bg-[#262626] hover:bg-[#262626] dark:hover:bg-[#333333] text-[#FFFFFF] flex items-center justify-center transition-all cursor-pointer shadow-sm touch-manipulation shrink-0"
                 title="Stop generation"
                 aria-label="Stop generation"
               >
@@ -133,14 +130,9 @@ export function ChatInput({
                 disabled={!isSendActive}
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 touch-manipulation ${
                   isSendActive
-                    ? 'bg-[#047857] hover:bg-[#065F46] text-[#FFFFFF] shadow-sm hover:scale-105 active:scale-95'
-                    : 'bg-[#047857]/40 text-[#FFFFFF]/80 cursor-not-allowed'
+                    ? 'bg-[#047857] hover:bg-[#065F46] dark:bg-[#059669] dark:hover:bg-[#10B981] text-[#FFFFFF] shadow-sm hover:scale-105 active:scale-95 neu-button-emerald'
+                    : 'bg-[#047857]/40 dark:bg-[#059669]/40 text-[#FFFFFF]/80 cursor-not-allowed'
                 }`}
-                style={{
-                  boxShadow: isSendActive
-                    ? '3px 3px 10px rgba(4, 120, 87, 0.3), -2px -2px 8px rgba(255, 255, 255, 0.8)'
-                    : undefined,
-                }}
                 title="Send message"
                 aria-label="Send message"
               >

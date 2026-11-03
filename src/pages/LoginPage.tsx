@@ -58,20 +58,20 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-[#F7F7F4] flex flex-col justify-center items-center px-4 py-8 select-none">
+    <div className="min-h-screen w-screen bg-[#F7F7F4] dark:bg-[#121212] flex flex-col justify-center items-center px-4 py-8 select-none transition-colors duration-200">
       
       {/* Centered Neumorphic Card */}
-      <div className="w-full max-w-md bg-[#FFFFFF] border border-[#E5E5E5] rounded-3xl neu-raised p-6 sm:p-8 md:p-10 transition-all">
+      <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-3xl neu-raised p-6 sm:p-8 md:p-10 transition-all">
         
         {/* Brand Icon & Heading */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-[#047857] text-white flex items-center justify-center shadow-xs mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#047857] dark:bg-[#059669] text-white flex items-center justify-center shadow-xs mb-4">
             <FileText className="w-7 h-7 stroke-[2.2]" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717] mb-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-1.5">
             Welcome back
           </h1>
-          <p className="text-xs sm:text-sm text-[#737373] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#737373] dark:text-[#A3A3A3] leading-relaxed">
             Sign in to continue building your professional resume.
           </p>
         </div>
@@ -89,7 +89,7 @@ export function LoginPage() {
           
           {/* Email field */}
           <div>
-            <label className="block text-xs font-semibold text-[#171717] mb-1.5">
+            <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED] mb-1.5">
               Email address
             </label>
             <input
@@ -99,19 +99,19 @@ export function LoginPage() {
               placeholder="nishu@example.com"
               disabled={loading}
               autoComplete="email"
-              className="w-full bg-[#FFFFFF] border border-[#E5E5E5] neu-inset-sm rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[#171717] placeholder-[#737373] focus:outline-hidden focus:border-[#047857]/50 transition-colors"
+              className="w-full bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-inset-sm rounded-xl px-4 py-2.5 text-xs sm:text-sm text-[#171717] dark:text-[#EDEDED] placeholder-[#737373] dark:placeholder-[#6B7280] focus:outline-hidden focus:border-[#047857]/50 dark:focus:border-[#10B981]/50 transition-colors"
             />
           </div>
 
           {/* Password field */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold text-[#171717]">
+              <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED]">
                 Password
               </label>
               <Link
                 to="/forgot-password"
-                className="text-[11px] font-medium text-[#047857] hover:underline"
+                className="text-[11px] font-medium text-[#047857] dark:text-[#10B981] hover:underline"
               >
                 Forgot password?
               </Link>
@@ -124,12 +124,12 @@ export function LoginPage() {
                 placeholder="••••••••"
                 disabled={loading}
                 autoComplete="current-password"
-                className="w-full bg-[#FFFFFF] border border-[#E5E5E5] neu-inset-sm rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-[#171717] placeholder-[#737373] focus:outline-hidden focus:border-[#047857]/50 transition-colors"
+                className="w-full bg-[#FFFFFF] dark:bg-[#262626] border border-[#E5E5E5] dark:border-[#333333] neu-inset-sm rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-[#171717] dark:text-[#EDEDED] placeholder-[#737373] dark:placeholder-[#6B7280] focus:outline-hidden focus:border-[#047857]/50 dark:focus:border-[#10B981]/50 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-[#737373] hover:text-[#171717] cursor-pointer"
+                className="absolute right-3 top-2.5 text-[#737373] dark:text-[#A3A3A3] hover:text-[#171717] dark:hover:text-[#FFFFFF] cursor-pointer"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -159,11 +159,11 @@ export function LoginPage() {
         </form>
 
         {/* Footer Navigation */}
-        <div className="mt-8 pt-5 border-t border-[#E5E5E5] text-center text-xs text-[#737373]">
+        <div className="mt-8 pt-5 border-t border-[#E5E5E5] dark:border-[#2E2E2E] text-center text-xs text-[#737373] dark:text-[#A3A3A3]">
           Don't have an account?{' '}
           <Link
             to="/signup"
-            className="font-semibold text-[#047857] hover:underline ml-1"
+            className="font-semibold text-[#047857] dark:text-[#10B981] hover:underline ml-1"
           >
             Create an account
           </Link>
@@ -171,7 +171,7 @@ export function LoginPage() {
 
       </div>
 
-      <div className="mt-6 text-[11px] text-[#737373] text-center">
+      <div className="mt-6 text-[11px] text-[#737373] dark:text-[#A3A3A3] text-center">
         ResumeAI · Secured with Firebase Authentication
       </div>
     </div>

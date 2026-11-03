@@ -1,15 +1,23 @@
 import { useState, useRef, KeyboardEvent } from 'react';
-import { Paperclip, Navigation, Moon, Menu } from 'lucide-react';
+import { Paperclip, Navigation, Moon, Sun, Menu } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface WelcomeScreenProps {
   onSendMessage: (text: string) => void;
   isLoading?: boolean;
   onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
-export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSidebar }: WelcomeScreenProps) {
+export function WelcomeScreen({
+  onSendMessage,
+  isLoading = false,
+  onToggleSidebar,
+  isSidebarOpen = true,
+}: WelcomeScreenProps) {
   const [input, setInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { theme, toggleTheme } = useTheme();
 
   const handleSubmit = () => {
     const trimmed = input.trim();
@@ -40,10 +48,10 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
   };
 
   return (
-    <div className="relative w-full h-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 py-10 select-none overflow-hidden">
+    <div className="relative w-full h-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 py-10 select-none overflow-hidden bg-[#F7F7F4] dark:bg-[#121212] transition-colors duration-200">
       
       {/* Background Soft Organic Mint/Emerald Fluid Wave matching reference */}
-      <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-35 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-35 dark:opacity-20 overflow-hidden">
         <svg
           className="w-full h-full min-w-[900px] max-w-6xl"
           viewBox="0 0 1000 600"
@@ -64,31 +72,35 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
         </svg>
       </div>
 
-      {/* Mobile-Only Sidebar Toggle (hidden on desktop where floating sidebar is always visible) */}
+      {/* Sidebar Toggle (Always visible on mobile/tablet, and visible on desktop when sidebar is collapsed) */}
       {onToggleSidebar && (
-        <div className="absolute top-6 left-6 z-20 md:hidden">
+        <div className={`absolute top-6 left-6 z-20 ${isSidebarOpen ? 'lg:hidden' : 'block'}`}>
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] neu-raised-sm flex items-center justify-center text-[#171717] hover:text-[#047857] transition-all cursor-pointer shadow-xs"
-            title="Open sidebar"
+            className="w-10 h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
+            title="Open sidebar navigation"
+            aria-label="Open sidebar"
           >
             <Menu className="w-4 h-4 stroke-[2]" />
           </button>
         </div>
       )}
 
-      {/* Top-Right Control: ONLY Dark / Light Mode Toggle */}
+      {/* Top-Right Control: Fully Functional Dark / Light Mode Toggle */}
       <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20">
         <button
           type="button"
-          onClick={() => {
-            document.documentElement.classList.toggle('dark');
-          }}
-          className="w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] neu-raised-sm flex items-center justify-center text-[#171717] hover:text-[#047857] transition-all cursor-pointer shadow-xs"
-          title="Toggle dark / light mode"
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
+          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
+          aria-label="Toggle dark/light theme"
         >
-          <Moon className="w-4 h-4 stroke-[2]" />
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4 text-amber-400 stroke-[2.2]" />
+          ) : (
+            <Moon className="w-4 h-4 stroke-[2]" />
+          )}
         </button>
       </div>
 
@@ -96,9 +108,9 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
       <div className="w-full max-w-2xl sm:max-w-3xl flex flex-col items-center text-center z-10 my-auto">
         
         {/* 1. Document Icon */}
-        <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-[#FFFFFF] border border-[#E5E5E5]/70 neu-raised flex items-center justify-center mb-6 shrink-0 transition-transform hover:scale-102">
+        <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5]/70 dark:border-[#2E2E2E] neu-raised flex items-center justify-center mb-6 shrink-0 transition-transform hover:scale-102">
           <svg
-            className="w-10 h-10 text-[#047857]"
+            className="w-10 h-10 text-[#047857] dark:text-[#10B981]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -113,18 +125,18 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
         </div>
 
         {/* 2. Heading */}
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] mb-2.5">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-2.5">
           Build Your Resume with AI
         </h1>
 
         {/* 3. Subtitle */}
-        <p className="text-[#737373] text-sm sm:text-base font-normal max-w-xl mb-8 leading-relaxed">
+        <p className="text-[#737373] dark:text-[#A3A3A3] text-sm sm:text-base font-normal max-w-xl mb-8 leading-relaxed">
           Create a professional, ATS-friendly resume through a simple conversation.
         </p>
 
         {/* 4. Chat Input - Directly Below Subtitle */}
         <div className="w-full max-w-2xl sm:max-w-3xl">
-          <div className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-full neu-raised px-4 sm:px-6 py-2.5 flex items-center gap-3 transition-all focus-within:border-[#047857]/50 focus-within:ring-2 focus-within:ring-[#047857]/5">
+          <div className="w-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-full neu-raised px-4 sm:px-6 py-2.5 flex items-center gap-3 transition-all focus-within:border-[#047857]/50 dark:focus-within:border-[#10B981]/50 focus-within:ring-2 focus-within:ring-[#047857]/5">
             
             {/* Input field */}
             <input
@@ -134,7 +146,7 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
               onKeyDown={handleKeyDown}
               disabled={isLoading}
               placeholder="Tell me about your education, skills, or experience..."
-              className="flex-1 bg-transparent border-none text-[#171717] placeholder:text-[#737373] text-sm sm:text-[15px] focus:outline-hidden py-2 font-normal"
+              className="flex-1 bg-transparent border-none text-[#171717] dark:text-[#EDEDED] placeholder:text-[#737373] dark:placeholder:text-[#6B7280] text-sm sm:text-[15px] focus:outline-hidden py-2 font-normal"
             />
 
             {/* Attachment paperclip */}
@@ -148,7 +160,7 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-[#171717] hover:text-[#047857] transition-colors cursor-pointer shrink-0"
+              className="p-2 text-[#171717] dark:text-[#A3A3A3] hover:text-[#047857] dark:hover:text-[#10B981] transition-colors cursor-pointer shrink-0"
               title="Attach existing resume or notes"
             >
               <Paperclip className="w-5 h-5 stroke-[2]" />
@@ -161,8 +173,8 @@ export function WelcomeScreen({ onSendMessage, isLoading = false, onToggleSideba
               disabled={!input.trim() || isLoading}
               className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
                 input.trim() && !isLoading
-                  ? 'bg-[#047857] hover:bg-[#065F46] text-white neu-button-emerald scale-100'
-                  : 'bg-[#047857] text-white/80 neu-button-emerald opacity-90'
+                  ? 'bg-[#047857] hover:bg-[#065F46] dark:bg-[#059669] dark:hover:bg-[#10B981] text-white neu-button-emerald scale-100'
+                  : 'bg-[#047857]/50 dark:bg-[#059669]/50 text-white/80 neu-button-emerald opacity-80 cursor-not-allowed'
               }`}
               title="Send message"
             >
