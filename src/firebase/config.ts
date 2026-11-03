@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
@@ -8,6 +8,21 @@ const app = initializeApp(firebaseConfig);
 // CRITICAL: Initialize Firestore with the specific database ID from config
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
+
+// Validate connection to Firestore as required by Firebase skill
+async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firebase Firestore: the client is currently in offline mode.');
+    }
+  }
+}
+
+if (typeof window !== 'undefined') {
+  testConnection();
+}
 
 export enum OperationType {
   CREATE = 'create',

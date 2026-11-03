@@ -70,17 +70,17 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-[#F7F7F4] dark:bg-[#121212] flex flex-col justify-center items-center px-4 py-8 select-none transition-colors duration-200">
+    <div className="min-h-screen min-h-[100dvh] w-screen max-w-full bg-[#F7F7F4] dark:bg-[#121212] flex flex-col justify-center items-center px-3 sm:px-4 py-6 sm:py-8 select-none transition-colors duration-200">
       
       {/* Centered Neumorphic Card */}
-      <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-3xl neu-raised p-6 sm:p-8 md:p-10 transition-all">
+      <div className="w-full max-w-md bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-2xl sm:rounded-3xl neu-raised p-5 sm:p-8 md:p-10 transition-all">
         
         {/* Brand Icon & Heading */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-[#047857] dark:bg-[#059669] text-white flex items-center justify-center shadow-xs mb-4">
-            <FileText className="w-7 h-7 stroke-[2.2]" />
+        <div className="flex flex-col items-center text-center mb-6 sm:mb-8">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#047857] dark:bg-[#059669] text-white flex items-center justify-center shadow-xs mb-3 sm:mb-4">
+            <FileText className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-1.5">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-1 sm:mb-1.5">
             Create your account
           </h1>
           <p className="text-xs sm:text-sm text-[#737373] dark:text-[#A3A3A3] leading-relaxed">

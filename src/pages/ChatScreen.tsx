@@ -46,7 +46,7 @@ export function ChatScreen() {
     if (typeof window === 'undefined') return true;
     const stored = localStorage.getItem('resumeai_sidebar_open');
     if (stored !== null) return stored === 'true';
-    return window.innerWidth >= 1024;
+    return window.innerWidth >= 768;
   });
 
   const handleToggleSidebar = useCallback(() => {
@@ -323,7 +323,17 @@ export function ChatScreen() {
       });
 
       if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
+        let errorDetail = `Server returned status ${response.status}`;
+        try {
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const errJson = await response.json();
+            if (errJson?.error) errorDetail = errJson.error;
+          }
+        } catch {
+          // ignore parsing error
+        }
+        throw new Error(errorDetail);
       }
 
       if (!response.body) {
@@ -550,7 +560,19 @@ export function ChatScreen() {
         signal: controller.signal,
       });
 
-      if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+      if (!response.ok) {
+        let errorDetail = `HTTP status ${response.status}`;
+        try {
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const errJson = await response.json();
+            if (errJson?.error) errorDetail = errJson.error;
+          }
+        } catch {
+          // ignore parsing error
+        }
+        throw new Error(errorDetail);
+      }
       if (!response.body) throw new Error('No response body');
 
       const reader = response.body.getReader();
@@ -781,7 +803,7 @@ export function ChatScreen() {
   const displayMessages = rawMessages.length > 0 ? rawMessages : [DEFAULT_INTRO_MESSAGE];
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F7F7F4] dark:bg-[#121212] text-[#171717] dark:text-[#EDEDED] font-sans transition-colors duration-200">
+    <div className="flex h-screen h-[100dvh] w-screen max-w-full overflow-hidden bg-[#F7F7F4] dark:bg-[#121212] text-[#171717] dark:text-[#EDEDED] font-sans transition-colors duration-200">
       
       {/* Floating Left Sidebar (Preserved exactly as approved) */}
       <Sidebar
@@ -843,7 +865,7 @@ export function ChatScreen() {
                     />
                   );
                 })}
-                <div ref={messagesEndRef} className="h-4 sm:h-6" />
+                <div ref={messagesEndRef} className="h-6 sm:h-8" />
               </div>
             </div>
 

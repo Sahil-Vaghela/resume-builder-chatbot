@@ -59,17 +59,17 @@ export function ChatHeader({
   };
 
   return (
-    <header className="h-14 md:h-15 border-b border-[#E5E5E5] dark:border-[#2E2E2E] bg-[#F7F7F4]/95 dark:bg-[#121212]/95 backdrop-blur-md px-3 sm:px-4 md:px-6 flex items-center justify-between gap-2 sm:gap-3 sticky top-0 z-30 select-none transition-colors duration-200">
+    <header className="h-14 md:h-15 border-b border-[#E5E5E5] dark:border-[#2E2E2E] bg-[#F7F7F4]/95 dark:bg-[#121212]/95 backdrop-blur-md px-2.5 sm:px-4 md:px-6 flex items-center justify-between gap-1.5 sm:gap-3 sticky top-0 z-30 select-none transition-colors duration-200">
       
       {/* Left: Sidebar Reopen / Toggle + Back Navigation + Title + Rename */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-hidden min-w-0 flex-1 mr-2">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 overflow-hidden min-w-0 flex-1 mr-1.5 sm:mr-2">
         
-        {/* Sidebar Re-open / Menu toggle button (Always visible on mobile/tablet, and visible on desktop when sidebar is collapsed) */}
+        {/* Sidebar Re-open / Menu toggle button (Always visible on mobile, and visible on tablet & desktop when sidebar is collapsed) */}
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
             className={`w-8 h-8 rounded-xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] flex items-center justify-center text-[#737373] dark:text-[#A3A3A3] hover:text-[#171717] dark:hover:text-[#FFFFFF] transition-all cursor-pointer shrink-0 neu-raised-sm ${
-              isSidebarOpen ? 'lg:hidden' : 'flex'
+              isSidebarOpen ? 'md:hidden' : 'flex'
             }`}
             title={isSidebarOpen ? 'Close navigation' : 'Open navigation'}
             aria-label="Toggle navigation menu"

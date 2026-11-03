@@ -142,11 +142,11 @@ export function SettingsModal({
         </div>
 
         {/* Content by Section */}
-        <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-[#FFFFFF] dark:bg-[#1E1E1E]">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 bg-[#FFFFFF] dark:bg-[#1E1E1E]">
           
           {/* Section 1: General */}
           {activeTab === 'general' && (
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED] mb-1.5">
                   Default Target Role / Career Field
@@ -166,7 +166,7 @@ export function SettingsModal({
                 <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED] mb-2">
                   Target Experience Level
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                   {careerLevels.map((lvl) => (
                     <button
                       key={lvl.id}
@@ -248,12 +248,12 @@ export function SettingsModal({
 
           {/* Section 3: Appearance with Functional Theme Selection */}
           {activeTab === 'appearance' && (
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-[#171717] dark:text-[#EDEDED] mb-2.5">
                   Color Theme Mode
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 sm:gap-3">
                   
                   {/* Light Mode Option */}
                   <div

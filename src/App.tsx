@@ -10,16 +10,16 @@ import { FileText, Loader2 } from 'lucide-react';
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen w-screen bg-[#F7F7F4] dark:bg-[#121212] flex flex-col items-center justify-center p-4 select-none transition-colors duration-200">
+    <div className="min-h-screen min-h-[100dvh] w-screen max-w-full bg-[#F7F7F4] dark:bg-[#121212] flex flex-col items-center justify-center p-4 select-none transition-colors duration-200">
       <div
-        className="flex flex-col items-center p-8 rounded-3xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised"
+        className="flex flex-col items-center p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised max-w-xs w-full text-center"
       >
         <div
-          className="w-16 h-16 rounded-2xl bg-[#F7F7F4] dark:bg-[#262626] flex items-center justify-center mb-4 text-[#047857] dark:text-[#10B981] neu-inset-sm"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#F7F7F4] dark:bg-[#262626] flex items-center justify-center mb-4 text-[#047857] dark:text-[#10B981] neu-inset-sm"
         >
-          <FileText className="w-8 h-8 stroke-[2.2]" />
+          <FileText className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2]" />
         </div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-[#171717] dark:text-[#EDEDED] tracking-tight mb-1">
+        <div className="flex items-center justify-center gap-2 text-sm font-semibold text-[#171717] dark:text-[#EDEDED] tracking-tight mb-1">
           <span>ResumeAI</span>
           <Loader2 className="w-4 h-4 animate-spin text-[#047857] dark:text-[#10B981]" />
         </div>

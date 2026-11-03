@@ -59,7 +59,7 @@ export function Sidebar({
 
   // Prevent background scrolling on mobile when drawer is open
   useEffect(() => {
-    if (isOpen && typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (isOpen && typeof window !== 'undefined' && window.innerWidth < 768) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
@@ -82,7 +82,7 @@ export function Sidebar({
   // Auto-close on mobile when selecting a navigation item
   const handleNavClick = (action?: () => void) => {
     if (action) action();
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
       onClose();
     }
   };
@@ -118,24 +118,27 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile & Tablet Drawer Backdrop Overlay */}
+      {/* Mobile Drawer Backdrop Overlay */}
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-[#171717]/35 dark:bg-black/65 backdrop-blur-xs lg:hidden transition-opacity duration-300 animate-in fade-in"
+          className="fixed inset-0 z-40 bg-[#171717]/35 dark:bg-black/65 backdrop-blur-xs md:hidden transition-opacity duration-300 animate-in fade-in"
           aria-hidden="true"
         />
       )}
 
-      {/* Floating Neumorphic Sidebar Panel (Slide-out drawer on mobile/tablet, Collapsible in-place on desktop) */}
+      {/* Floating Neumorphic Sidebar Panel:
+          - Mobile (320px - 767px): fixed slide-out drawer
+          - Tablet (768px - 1023px): compact in-flow floating sidebar (w-56)
+          - Desktop (1024px+): full floating sidebar (w-64 xl:w-72) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 h-[calc(100vh-1.25rem)] md:h-[calc(100vh-2rem)] lg:h-[calc(100vh-2.5rem)] bg-[#F7F7F4] dark:bg-[#1E1E1E] border border-[#E5E5E5]/90 dark:border-[#2E2E2E] rounded-3xl neu-raised flex flex-col justify-between transition-all duration-300 ease-in-out shrink-0 select-none overflow-hidden ${
+        className={`fixed md:static inset-y-0 left-0 z-50 h-[calc(100vh-1rem)] md:h-[calc(100vh-1.75rem)] lg:h-[calc(100vh-2.5rem)] bg-[#F7F7F4] dark:bg-[#1E1E1E] border border-[#E5E5E5]/90 dark:border-[#2E2E2E] rounded-3xl neu-raised flex flex-col justify-between transition-all duration-300 ease-in-out shrink-0 select-none overflow-hidden ${
           isOpen
-            ? 'w-72 max-w-[85vw] sm:w-80 md:w-64 lg:w-64 xl:w-72 my-2.5 ml-2.5 md:my-4 md:ml-4 lg:my-5 lg:ml-5 translate-x-0 opacity-100 pointer-events-auto'
-            : '-translate-x-[calc(100%+2rem)] lg:translate-x-0 lg:w-0 lg:my-5 lg:ml-0 lg:p-0 lg:border-0 lg:opacity-0 pointer-events-none'
+            ? 'w-72 max-w-[85vw] my-2 ml-2 md:w-56 md:my-3.5 md:ml-3.5 lg:w-64 xl:w-72 lg:my-5 lg:ml-5 translate-x-0 opacity-100 pointer-events-auto'
+            : '-translate-x-[calc(100%+2rem)] md:translate-x-0 md:w-0 md:my-3.5 md:ml-0 md:p-0 md:border-0 md:opacity-0 lg:my-5 lg:ml-0 pointer-events-none'
         }`}
       >
-        <div className="flex flex-col flex-1 overflow-y-auto px-3.5 py-4 md:px-3 md:py-4.5 lg:px-4 lg:py-5 scrollbar-none">
+        <div className="flex flex-col flex-1 overflow-y-auto px-3 py-3.5 md:px-3 md:py-4 lg:px-4 lg:py-5 scrollbar-none">
           
           {/* 1. ResumeAI logo, name & Close Button */}
           <div className="flex items-center justify-between mb-4 md:mb-5 px-1">

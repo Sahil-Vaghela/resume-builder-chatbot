@@ -72,13 +72,13 @@ export function WelcomeScreen({
         </svg>
       </div>
 
-      {/* Sidebar Toggle (Always visible on mobile/tablet, and visible on desktop when sidebar is collapsed) */}
+      {/* Sidebar Toggle (Always visible on mobile, and visible on tablet/desktop when sidebar is collapsed) */}
       {onToggleSidebar && (
-        <div className={`absolute top-6 left-6 z-20 ${isSidebarOpen ? 'lg:hidden' : 'block'}`}>
+        <div className={`absolute top-4 left-4 sm:top-6 sm:left-6 z-20 ${isSidebarOpen ? 'md:hidden' : 'block'}`}>
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="w-10 h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
             title="Open sidebar navigation"
             aria-label="Open sidebar"
           >
@@ -88,11 +88,11 @@ export function WelcomeScreen({
       )}
 
       {/* Top-Right Control: Fully Functional Dark / Light Mode Toggle */}
-      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-20">
         <button
           type="button"
           onClick={toggleTheme}
-          className="w-10 h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] neu-raised-sm flex items-center justify-center text-[#171717] dark:text-[#EDEDED] hover:text-[#047857] dark:hover:text-[#10B981] transition-all cursor-pointer shadow-xs"
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
           aria-label="Toggle dark/light theme"
         >
@@ -105,12 +105,12 @@ export function WelcomeScreen({
       </div>
 
       {/* Main Content Area - Horizontally and vertically centered in main workspace */}
-      <div className="w-full max-w-2xl sm:max-w-3xl flex flex-col items-center text-center z-10 my-auto">
+      <div className="w-full max-w-2xl sm:max-w-3xl flex flex-col items-center text-center z-10 my-auto px-1 sm:px-2">
         
         {/* 1. Document Icon */}
-        <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5]/70 dark:border-[#2E2E2E] neu-raised flex items-center justify-center mb-6 shrink-0 transition-transform hover:scale-102">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 sm:w-22 sm:h-22 rounded-2xl sm:rounded-3xl bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5]/70 dark:border-[#2E2E2E] neu-raised flex items-center justify-center mb-4 sm:mb-6 shrink-0 transition-transform hover:scale-102">
           <svg
-            className="w-10 h-10 text-[#047857] dark:text-[#10B981]"
+            className="w-8 h-8 sm:w-10 sm:h-10 text-[#047857] dark:text-[#10B981]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -125,18 +125,18 @@ export function WelcomeScreen({
         </div>
 
         {/* 2. Heading */}
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-2.5">
+        <h1 className="text-2xl xs:text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] dark:text-[#FFFFFF] mb-2 sm:mb-2.5 leading-tight px-1">
           Build Your Resume with AI
         </h1>
 
         {/* 3. Subtitle */}
-        <p className="text-[#737373] dark:text-[#A3A3A3] text-sm sm:text-base font-normal max-w-xl mb-8 leading-relaxed">
+        <p className="text-[#737373] dark:text-[#A3A3A3] text-xs sm:text-sm md:text-base font-normal max-w-xl mb-6 sm:mb-8 leading-relaxed px-2">
           Create a professional, ATS-friendly resume through a simple conversation.
         </p>
 
         {/* 4. Chat Input - Directly Below Subtitle */}
         <div className="w-full max-w-2xl sm:max-w-3xl">
-          <div className="w-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-full neu-raised px-4 sm:px-6 py-2.5 flex items-center gap-3 transition-all focus-within:border-[#047857]/50 dark:focus-within:border-[#10B981]/50 focus-within:ring-2 focus-within:ring-[#047857]/5">
+          <div className="w-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border border-[#E5E5E5] dark:border-[#2E2E2E] rounded-full neu-raised px-3.5 sm:px-6 py-1.5 sm:py-2.5 flex items-center gap-2 sm:gap-3 transition-all focus-within:border-[#047857]/50 dark:focus-within:border-[#10B981]/50 focus-within:ring-2 focus-within:ring-[#047857]/5">
             
             {/* Input field */}
             <input

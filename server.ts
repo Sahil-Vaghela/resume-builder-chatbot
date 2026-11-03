@@ -153,7 +153,7 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // Endpoint: Auto-generate a concise 3-5 word conversation title
-app.post('/api/chat/title', async (req, res) => {
+app.post(['/api/chat/title', '/api/title'], async (req, res) => {
   const { firstMessage } = req.body || {};
 
   if (!firstMessage || typeof firstMessage !== 'string' || !firstMessage.trim()) {
@@ -207,7 +207,7 @@ app.post('/api/chat/title', async (req, res) => {
 });
 
 // Endpoint: Extract structured resume draft from conversation history
-app.post('/api/chat/extract-resume', async (req, res) => {
+app.post(['/api/chat/extract-resume', '/api/extract-resume'], async (req, res) => {
   const { messages } = req.body || {};
 
   if (!Array.isArray(messages) || messages.length === 0) {
